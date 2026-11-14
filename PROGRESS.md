@@ -3,7 +3,7 @@
 Bifează `[x]` și fă un commit după fiecare pas.
 
 ## 0. Setup
-- [ ] Template-ul SDL3 descărcat în `src/` + `assets/`
+- [x] Template-ul SDL3 descărcat în `src/` (peisajul e desenat din cod, nu are assets)
 - [ ] Proiectul compilează și pornește (fereastră 700×800 cu peisajul care derulează)
 
 ## 1. Elemente vizuale (20 p)
