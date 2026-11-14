@@ -1,0 +1,22 @@
+# Build
+build/
+cmake-build-*/
+out/
+*.o
+*.obj
+*.exe
+*.pdb
+*.ilk
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+xcuserdata/
+*.xcworkspace
+
+# OS
+.DS_Store
+Thumbs.db
