@@ -24,16 +24,34 @@ FetchContent_Declare(glm
     GIT_SHALLOW    TRUE)
 FetchContent_MakeAvailable(glm)
 
+# --- Codul din training (10 noiembrie) ---
+file(GLOB TRAINING_SOURCES CONFIGURE_DEPENDS training/*.cpp)
+add_executable(training ${TRAINING_SOURCES})
+target_include_directories(training PRIVATE training)
+target_link_libraries(training PRIVATE SDL3::SDL3 glm::glm)
+
+# --- Jocul (Hard Task) – se construiește doar când src/ are cod ---
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp src/*.c)
-if(NOT SOURCES)
-    message(FATAL_ERROR "src/ e gol: copiază acolo fișierele din template-ul SDL3.")
+if(SOURCES)
+    add_executable(shooter ${SOURCES})
+    target_include_directories(shooter PRIVATE src)
+    target_link_libraries(shooter PRIVATE SDL3::SDL3 glm::glm)
+
+    # Copiază assets/ lângă executabil
+    add_custom_command(TARGET shooter POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:shooter>/assets)
+else()
+    message(STATUS "src/ e gol: se construiește doar ținta 'training'.")
 endif()
 
-add_executable(shooter ${SOURCES})
-target_include_directories(shooter PRIVATE src)
-target_link_libraries(shooter PRIVATE SDL3::SDL3 glm::glm)
-
-# Copiază assets/ lângă executabil
-add_custom_command(TARGET shooter POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:shooter>/assets)
+# Pe Windows, copiază SDL3.dll lângă executabile
+if(WIN32)
+    foreach(t training shooter)
+        if(TARGET ${t})
+            add_custom_command(TARGET ${t} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                        $<TARGET_FILE:SDL3::SDL3> $<TARGET_FILE_DIR:${t}>)
+        endif()
+    endforeach()
+endif()
